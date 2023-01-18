@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="securiteWeb_isi:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>securiteWeb_isi</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="securiteWeb_isi-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="securiteWeb_isi:war exploded" />
+    </root>
+  </artifact>
+</component>
