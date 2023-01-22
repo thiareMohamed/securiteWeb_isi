@@ -13,10 +13,19 @@
                         <c:out value="${message}"/>
                     </div>
                 </c:if>
-                <form action="CompteServlet" method="post">
-                    <input type="email" placeholder="email" name="email">
-                    <input type="password" placeholder="password" name="password">
-                    <input type="submit" value="Enregistrer">
+
+                <c:if test="${compte != null}">
+                    <form action="CompteServlet?action=update" method="post">
+                </c:if>
+                <c:if test="${compte == null}">
+                        <form action="CompteServlet?action=add" method="post">
+                </c:if>
+                    <c:if test="${compte != null}">
+                        <input type="hidden" name="id" value="<c:out value='${compte.id}' />" />
+                    </c:if>
+                    <input type="email" placeholder="email" name="email" value="<c:out value='${compte.email}'/>" />
+                    <input type="password" placeholder="password" name="password" value="<c:out value='${compte.password}'/>" />
+                    <input type="submit" value="Enregistrer" name="action">
                 </form>
             </div>
         </section>
@@ -36,7 +45,8 @@
                             <td>${compte.id}</td>
                             <td>${compte.email}</td>
                             <td>
-                                <a href="CompteServlet?action=delete&id=${compte.id}">Supprimer</a>
+                                <a href="CompteServlet?action=delete&id=${compte.id}" id="${compte.id}-delete">Supprimer</a>
+                                <a href="CompteServlet?action=edit&id=${compte.id}" id="${compte.id}-edit">Modifier</a>
                             </td>
                         </tr>
                     </c:forEach>

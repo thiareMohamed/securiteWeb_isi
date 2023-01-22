@@ -12,4 +12,5 @@ public interface CompteDao {
     public int delete(ComptesEntity comptesEntity) throws Exception;
     public List<ComptesEntity> findAll() throws Exception;
     public int deleteById(int Id) throws Exception;
+    public ComptesEntity findById(int id);
 }

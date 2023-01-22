@@ -72,6 +72,7 @@ public class CompteImpl implements CompteDao {
 
     @Override
     public int deleteById(int id) throws Exception {
+        tx.begin();
         ComptesEntity compte = em.find(ComptesEntity.class, id);
         if (compte == null) {
             throw new Exception("Compte introuvable");
@@ -79,5 +80,13 @@ public class CompteImpl implements CompteDao {
         em.remove(compte);
         tx.commit();
         return 1;
+    }
+
+    @Override
+    public ComptesEntity findById(int id) {
+        tx.begin();
+        ComptesEntity comptesEntity = em.find(ComptesEntity.class, id);
+        tx.commit();
+        return comptesEntity;
     }
 }
