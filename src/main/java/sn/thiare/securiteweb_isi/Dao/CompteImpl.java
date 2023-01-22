@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CompteImpl implements CompteDao {
@@ -26,7 +27,10 @@ public class CompteImpl implements CompteDao {
     }
 
     @Override
-    public int create(ComptesEntity comptesEntity) {
+    public int create(CompteDto compteDto) {
+        ComptesEntity comptesEntity = new ComptesEntity();
+        comptesEntity.setEmail(compteDto.getEmail());
+        comptesEntity.setPassword(compteDto.getPassword());
         try {
             tx.begin();
             em.persist(comptesEntity);
@@ -39,22 +43,22 @@ public class CompteImpl implements CompteDao {
     }
 
     @Override
-    public int update(ComptesEntity comptesEntity) throws Exception {
+    public int update(CompteDto compteDto) throws Exception {
         tx.begin();
-        ComptesEntity compte = em.find(ComptesEntity.class, comptesEntity.getId());
+        ComptesEntity compte = em.find(ComptesEntity.class, compteDto.getId());
         if (compte == null) {
             throw new Exception("Compte introuvable");
         }
-        compte.setEmail(comptesEntity.getEmail());
-        compte.setPassword(comptesEntity.getPassword());
+        compte.setEmail(compteDto.getEmail());
+        compte.setPassword(compteDto.getPassword());
         tx.commit();
         return 1;
     }
 
     @Override
-    public int delete(ComptesEntity comptesEntity) throws Exception {
+    public int delete(CompteDto compteDto) throws Exception {
         tx.begin();
-        ComptesEntity compte = em.find(ComptesEntity.class, comptesEntity.getId());
+        ComptesEntity compte = em.find(ComptesEntity.class, compteDto.getId());
         if (compte == null) {
             throw new Exception("Compte introuvable");
         }
@@ -63,11 +67,20 @@ public class CompteImpl implements CompteDao {
         return 1;
     }
     @Override
-    public List<ComptesEntity> findAll() throws Exception {
+    public List<CompteDto> findAll() throws Exception {
         tx.begin();
         List<ComptesEntity> comptes = em.createQuery("SELECT c FROM ComptesEntity c").getResultList();
         tx.commit();
-        return comptes;
+        List<CompteDto> compteDtos = new ArrayList<>();
+        comptes.forEach(comptesEntity -> {
+            CompteDto compteDto = new CompteDto();
+            compteDto.setId(comptesEntity.getId());
+            compteDto.setEmail(comptesEntity.getEmail());
+            compteDto.setPassword(comptesEntity.getPassword());
+            compteDtos.add(compteDto);
+        });
+
+        return compteDtos;
     }
 
     @Override
@@ -83,10 +96,11 @@ public class CompteImpl implements CompteDao {
     }
 
     @Override
-    public ComptesEntity findById(int id) {
+    public CompteDto findById(int id) {
         tx.begin();
         ComptesEntity comptesEntity = em.find(ComptesEntity.class, id);
         tx.commit();
-        return comptesEntity;
+        CompteDto compteDto = new CompteDto(comptesEntity.getId(), comptesEntity.getEmail(), comptesEntity.getPassword());
+        return compteDto;
     }
 }

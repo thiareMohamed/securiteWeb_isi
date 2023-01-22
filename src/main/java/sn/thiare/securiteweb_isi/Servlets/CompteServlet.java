@@ -5,7 +5,6 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import sn.thiare.securiteweb_isi.Dao.CompteDao;
 import sn.thiare.securiteweb_isi.Dao.CompteImpl;
-import sn.thiare.securiteweb_isi.entity.ComptesEntity;
 import sn.thiare.securiteweb_isi.entity.dto.CompteDto;
 
 import java.io.IOException;
@@ -43,7 +42,7 @@ public class CompteServlet extends HttpServlet {
                         break;
                 }
             }
-            List<ComptesEntity> comptes = compteDao.findAll();
+            List<CompteDto> comptes = compteDao.findAll();
             request.setAttribute("comptes", comptes);
             request.getRequestDispatcher("/compte.jsp").forward(request, response);
         } catch (Exception e) {
@@ -54,55 +53,25 @@ public class CompteServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doGet(request, response);
-//
-//        String action = request.getParameter("action");
-//
-//        if (action.equals("Enregistrer")){
-//            ComptesEntity comptesEntity = new ComptesEntity();
-//            comptesEntity.setEmail(request.getParameter("email"));
-//            comptesEntity.setPassword(request.getParameter("password"));
-//
-//            int ok = compteDao.create(comptesEntity);
-//            String message = "";
-//            if (ok == 1) {
-//                message = "Compte créé avec succès";
-//                request.setAttribute("message", message);
-//                this.doGet(request, response);
-//            } else {
-//                message = "Erreur lors de la création du compte";
-//                request.setAttribute("message", message);
-//                this.doGet(request, response);
-//            }
-//        }
-//
-//        if (action.equals("edit")) {
-//            String id = request.getParameter("id");
-//            ComptesEntity comptesEntity = this.compteDao.findById(Integer.parseInt(id));
-//            request.setAttribute("id", id);
-//            request.setAttribute("email", comptesEntity.getEmail());
-//            request.setAttribute("password", comptesEntity.getPassword());
-//            request.setAttribute("action", "edit");
-//            this.doGet(request, response);
-//        }
     }
 
     private void add(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ComptesEntity comptesEntity = new ComptesEntity();
-        comptesEntity.setEmail(request.getParameter("email"));
-        comptesEntity.setPassword(request.getParameter("password"));
+        CompteDto compteDto = new CompteDto();
+        compteDto.setEmail(request.getParameter("email"));
+        compteDto.setPassword(request.getParameter("password"));
 
-        int ok = compteDao.create(comptesEntity);
+        int ok = compteDao.create(compteDto);
         String message = "";
         if (ok == 1) {
             message = "Compte créé avec succès";
             request.setAttribute("message", message);
-            List<ComptesEntity> comptes = compteDao.findAll();
+            List<CompteDto> comptes = compteDao.findAll();
             request.setAttribute("comptes", comptes);
             request.getRequestDispatcher("/compte.jsp").forward(request, response);
         } else {
             message = "Erreur lors de la création du compte";
             request.setAttribute("message", message);
-            List<ComptesEntity> comptes = compteDao.findAll();
+            List<CompteDto> comptes = compteDao.findAll();
             request.setAttribute("comptes", comptes);
             request.getRequestDispatcher("/compte.jsp").forward(request, response);
         }
@@ -115,36 +84,36 @@ public class CompteServlet extends HttpServlet {
         if (ok == 1) {
             message = "Compte supprimé avec succès";
             request.setAttribute("message", message);
-            List<ComptesEntity> comptes = compteDao.findAll();
+            List<CompteDto> comptes = compteDao.findAll();
             request.setAttribute("comptes", comptes);
             request.getRequestDispatcher("/compte.jsp").forward(request, response);
         } else {
             message = "Erreur lors de la suppression du compte";
             request.setAttribute("message", message);
-            List<ComptesEntity> comptes = compteDao.findAll();
+            List<CompteDto> comptes = compteDao.findAll();
             request.setAttribute("comptes", comptes);
             request.getRequestDispatcher("/compte.jsp").forward(request, response);
         }
     }
 
     private void update(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ComptesEntity comptesEntity = new ComptesEntity();
-        comptesEntity.setId(Integer.parseInt(request.getParameter("id")));
-        comptesEntity.setEmail(request.getParameter("email"));
-        comptesEntity.setPassword(request.getParameter("password"));
+        CompteDto compteDto = new CompteDto();
+        compteDto.setId(Integer.parseInt(request.getParameter("id")));
+        compteDto.setEmail(request.getParameter("email"));
+        compteDto.setPassword(request.getParameter("password"));
 
-        int ok = compteDao.update(comptesEntity);
+        int ok = compteDao.update(compteDto);
         String message = "";
         if (ok == 1) {
             message = "Compte modifié avec succès";
             request.setAttribute("message", message);
-            List<ComptesEntity> comptes = compteDao.findAll();
+            List<CompteDto> comptes = compteDao.findAll();
             request.setAttribute("comptes", comptes);
             request.getRequestDispatcher("/compte.jsp").forward(request, response);
         } else {
             message = "Erreur lors de la modification du compte";
             request.setAttribute("message", message);
-            List<ComptesEntity> comptes = compteDao.findAll();
+            List<CompteDto> comptes = compteDao.findAll();
             request.setAttribute("comptes", comptes);
             request.getRequestDispatcher("/compte.jsp").forward(request, response);
         }
@@ -152,9 +121,9 @@ public class CompteServlet extends HttpServlet {
 
     private void edit(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String id = request.getParameter("id");
-        ComptesEntity comptesEntity = this.compteDao.findById(Integer.parseInt(id));
-        request.setAttribute("compte", comptesEntity);
-        List<ComptesEntity> comptes = compteDao.findAll();
+        CompteDto compteDto = this.compteDao.findById(Integer.parseInt(id));
+        request.setAttribute("compte", compteDto);
+        List<CompteDto> comptes = compteDao.findAll();
         request.setAttribute("comptes", comptes);
         request.getRequestDispatcher("/compte.jsp").forward(request, response);
     }
