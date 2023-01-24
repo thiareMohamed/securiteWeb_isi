@@ -6,10 +6,7 @@ import sn.thiare.securiteweb_isi.entity.DroitEntity;
 import sn.thiare.securiteweb_isi.entity.dto.CompteDto;
 import sn.thiare.securiteweb_isi.entity.dto.DroitDto;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -121,11 +118,11 @@ public class CompteImpl implements CompteDao {
 
     @Override
     public CompteDto findByEmail(String email) {
-        tx.begin();
-        ComptesEntity comptesEntity = em.find(ComptesEntity.class, email);
-        tx.commit();
-        DroitDto droitDto = new DroitDto(comptesEntity.getDroitEntity().getId(), comptesEntity.getDroitEntity().getName());
-        CompteDto compteDto = new CompteDto(comptesEntity.getId(), comptesEntity.getEmail(), comptesEntity.getPassword(), droitDto);
-        return compteDto;
+        return em.createQuery("select c from ComptesEntity c where c.email = :email", ComptesEntity.class)
+                .setParameter("email", email)
+                .getResultStream()
+                .findFirst()
+                .map(comptesEntity -> new CompteDto(comptesEntity.getId(), comptesEntity.getEmail(), comptesEntity.getPassword(), new DroitDto(comptesEntity.getDroitEntity().getId(), comptesEntity.getDroitEntity().getName())))
+                .orElse(null);
     }
 }

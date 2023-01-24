@@ -13,9 +13,11 @@ import java.io.IOException;
 public class LoginServlet extends HttpServlet {
 
     private CompteDao compteDao;
+    private CompteServlet compteServlet;
 
     public void init() throws ServletException {
         compteDao = new CompteImpl();
+        compteServlet = new CompteServlet();
     }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -24,18 +26,17 @@ public class LoginServlet extends HttpServlet {
         CompteDto compteDto = this.compteDao.findByEmail(email);
         if (compteDto != null) {
             if (compteDto.getPassword().equals(password)) {
-                request.setAttribute("compte", compteDto);
                 //use session to store the user
                 HttpSession session = request.getSession();
                 session.setAttribute("compte", compteDto);
-                request.getRequestDispatcher("/index.jsp").forward(request, response);
+                request.getRequestDispatcher("/CompteServlet").forward(request, response);
             } else {
                 request.setAttribute("message", "Mot de passe incorrect");
-                request.getRequestDispatcher("/login.jsp").forward(request, response);
+                request.getRequestDispatcher("/index.jsp").forward(request, response);
             }
         } else {
             request.setAttribute("message", "Compte inexistant");
-            request.getRequestDispatcher("/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/index.jsp").forward(request, response);
         }
     }
 
