@@ -2,23 +2,28 @@ package sn.thiare.securiteweb_isi.Dao;
 
 
 import sn.thiare.securiteweb_isi.entity.ComptesEntity;
+import sn.thiare.securiteweb_isi.entity.DroitEntity;
 import sn.thiare.securiteweb_isi.entity.dto.CompteDto;
+import sn.thiare.securiteweb_isi.entity.dto.DroitDto;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class CompteImpl implements CompteDao {
 
     private EntityManager em;
     private EntityTransaction tx;
+    private DroitDao droitDao;
     public CompteImpl() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("default");
         em = emf.createEntityManager();
         tx = em.getTransaction();
+        droitDao = new DroitImpl();
     }
 
     @Override
@@ -27,10 +32,15 @@ public class CompteImpl implements CompteDao {
     }
 
     @Override
-    public int create(CompteDto compteDto) {
+    public int create(CompteDto compteDto, int idDroit) throws Exception {
         ComptesEntity comptesEntity = new ComptesEntity();
         comptesEntity.setEmail(compteDto.getEmail());
         comptesEntity.setPassword(compteDto.getPassword());
+        DroitDto droitEntity = droitDao.getDroitById(idDroit);
+        DroitEntity droitEntity1 = new DroitEntity();
+        droitEntity1.setId(droitEntity.getId());
+        droitEntity1.setName(droitEntity.getName());
+        comptesEntity.setDroitEntity(droitEntity1);
         try {
             tx.begin();
             em.persist(comptesEntity);
@@ -51,6 +61,10 @@ public class CompteImpl implements CompteDao {
         }
         compte.setEmail(compteDto.getEmail());
         compte.setPassword(compteDto.getPassword());
+        DroitEntity droitEntity = new DroitEntity();
+        droitEntity.setId(compteDto.getDroit().getId());
+        droitEntity.setName(compteDto.getDroit().getName());
+        compte.setDroitEntity(droitEntity);
         tx.commit();
         return 1;
     }
@@ -68,19 +82,20 @@ public class CompteImpl implements CompteDao {
     }
     @Override
     public List<CompteDto> findAll() throws Exception {
-        tx.begin();
-        List<ComptesEntity> comptes = em.createQuery("SELECT c FROM ComptesEntity c").getResultList();
-        tx.commit();
-        List<CompteDto> compteDtos = new ArrayList<>();
-        comptes.forEach(comptesEntity -> {
-            CompteDto compteDto = new CompteDto();
-            compteDto.setId(comptesEntity.getId());
-            compteDto.setEmail(comptesEntity.getEmail());
-            compteDto.setPassword(comptesEntity.getPassword());
-            compteDtos.add(compteDto);
-        });
-
-        return compteDtos;
+         List<ComptesEntity> comptesEntities = em.createQuery("select c from ComptesEntity c").getResultList();
+            List<CompteDto> compteDtos = new ArrayList<>();
+            for (ComptesEntity comptesEntity : comptesEntities) {
+                CompteDto compteDto = new CompteDto();
+                compteDto.setId(comptesEntity.getId());
+                compteDto.setEmail(comptesEntity.getEmail());
+                compteDto.setPassword(comptesEntity.getPassword());
+                DroitDto droitDto = new DroitDto();
+                droitDto.setId(comptesEntity.getDroitEntity().getId());
+                droitDto.setName(comptesEntity.getDroitEntity().getName());
+                compteDto.setDroit(droitDto);
+                compteDtos.add(compteDto);
+            }
+            return compteDtos;
     }
 
     @Override
@@ -100,7 +115,17 @@ public class CompteImpl implements CompteDao {
         tx.begin();
         ComptesEntity comptesEntity = em.find(ComptesEntity.class, id);
         tx.commit();
-        CompteDto compteDto = new CompteDto(comptesEntity.getId(), comptesEntity.getEmail(), comptesEntity.getPassword());
+        CompteDto compteDto = new CompteDto(comptesEntity.getId(), comptesEntity.getEmail(), comptesEntity.getPassword(), new DroitDto(comptesEntity.getDroitEntity().getId(), comptesEntity.getDroitEntity().getName()));
+        return compteDto;
+    }
+
+    @Override
+    public CompteDto findByEmail(String email) {
+        tx.begin();
+        ComptesEntity comptesEntity = em.find(ComptesEntity.class, email);
+        tx.commit();
+        DroitDto droitDto = new DroitDto(comptesEntity.getDroitEntity().getId(), comptesEntity.getDroitEntity().getName());
+        CompteDto compteDto = new CompteDto(comptesEntity.getId(), comptesEntity.getEmail(), comptesEntity.getPassword(), droitDto);
         return compteDto;
     }
 }

@@ -1,3 +1,4 @@
+<%@ taglib prefix="C" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!doctype html>
 <html lang="en">
@@ -25,6 +26,10 @@
                     </c:if>
                     <input type="email" placeholder="email" name="email" value="<c:out value='${compte.email}'/>" />
                     <input type="password" placeholder="password" name="password" value="<c:out value='${compte.password}'/>" />
+                    <select name="idDroits" value="<c:out value='${compte.droit.id}'/>">
+                        <c:forEach items="${droits}" var="droit">
+                            <option value="<c:out value='${droit.id}'/>"><c:out value='${droit.name}'/></option>
+                        </c:forEach>
                     <input type="submit" value="Enregistrer" name="action">
                 </form>
             </div>
@@ -36,6 +41,7 @@
                 <tr>
                     <th>Identifiant</th>
                     <th>Email</th>
+                    <th>Droit</th>
                     <th>Action</th>
                 </tr>
                 </thead>
@@ -44,6 +50,11 @@
                         <tr>
                             <td>${compte.id}</td>
                             <td>${compte.email}</td>
+                            <td><c:forEach items="${droits}" var="droit">
+                                <c:if test="${droit.id == compte.droit.id}">
+                                    ${droit.name}
+                                </c:if>
+                            </c:forEach></td>
                             <td>
                                 <a href="CompteServlet?action=delete&id=${compte.id}" id="${compte.id}-delete">Supprimer</a>
                                 <a href="CompteServlet?action=edit&id=${compte.id}" id="${compte.id}-edit">Modifier</a>

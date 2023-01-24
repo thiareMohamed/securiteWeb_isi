@@ -3,6 +3,7 @@ package sn.thiare.securiteweb_isi.entity;
 
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "droit", schema = "securiteweb_isi")
@@ -14,6 +15,17 @@ public class DroitEntity {
     @Basic
     @Column(name = "name")
     private String name;
+
+    @ManyToOne()
+    private ComptesEntity comptesEntity;
+
+    public DroitEntity(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public DroitEntity() {
+    }
 
     public int getId() {
         return id;

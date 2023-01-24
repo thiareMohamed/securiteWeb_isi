@@ -24,6 +24,14 @@ public class DroitServlet extends HttpServlet {
     }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        //check if the user is connected
+//        HttpSession session = request.getSession();
+//        CompteDto compteDto = (CompteDto) session.getAttribute("compte");
+//        if (compteDto == null) {
+//            request.setAttribute("message", "Vous devez vous connecter pour accéder à cette page");
+//            request.getRequestDispatcher("/login.jsp").forward(request, response);
+//        }
+
         String action = request.getParameter("action");
         try {
             if (action != null) {
@@ -44,9 +52,7 @@ public class DroitServlet extends HttpServlet {
                         break;
                 }
             }
-            List<DroitDto> droits = droitDao.getAllDroit();
-            request.setAttribute("droits", droits);
-            request.getRequestDispatcher("/droit.jsp").forward(request, response);
+            loadAllDroit(request, response);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -66,15 +72,11 @@ public class DroitServlet extends HttpServlet {
         if (ok == 1) {
             message = "Droit créé avec succès";
             request.setAttribute("message", message);
-            List<DroitDto> droits = droitDao.getAllDroit();
-            request.setAttribute("droits", droits);
-            request.getRequestDispatcher("/droit.jsp").forward(request, response);
+            loadAllDroit(request, response);
         } else {
             message = "Erreur lors de la création du droit";
             request.setAttribute("message", message);
-            List<DroitDto> droits = droitDao.getAllDroit();
-            request.setAttribute("droits", droits);
-            request.getRequestDispatcher("/droit.jsp").forward(request, response);
+            loadAllDroit(request, response);
         }
     }
 
@@ -85,15 +87,11 @@ public class DroitServlet extends HttpServlet {
         if (ok == 1) {
             message = "Droit supprimé avec succès";
             request.setAttribute("message", message);
-            List<DroitDto> droits = droitDao.getAllDroit();
-            request.setAttribute("droits", droits);
-            request.getRequestDispatcher("/droit.jsp").forward(request, response);
+            loadAllDroit(request, response);
         } else {
             message = "Erreur lors de la suppression du droit";
             request.setAttribute("message", message);
-            List<DroitDto> droits = droitDao.getAllDroit();
-            request.setAttribute("droits", droits);
-            request.getRequestDispatcher("/droit.jsp").forward(request, response);
+            loadAllDroit(request, response);
         }
     }
 
@@ -107,15 +105,11 @@ public class DroitServlet extends HttpServlet {
         if (ok == 1) {
             message = "Droit modifié avec succès";
             request.setAttribute("message", message);
-            List<DroitDto> droits = droitDao.getAllDroit();
-            request.setAttribute("droits", droits);
-            request.getRequestDispatcher("/droit.jsp").forward(request, response);
+            loadAllDroit(request, response);
         } else {
             message = "Erreur lors de la modification du droit";
             request.setAttribute("message", message);
-            List<DroitDto> droits = droitDao.getAllDroit();
-            request.setAttribute("droits", droits);
-            request.getRequestDispatcher("/droit.jsp").forward(request, response);
+            loadAllDroit(request, response);
         }
     }
 
@@ -123,6 +117,10 @@ public class DroitServlet extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         DroitDto droitDto = droitDao.getDroitById(id);
         request.setAttribute("droit", droitDto);
+        loadAllDroit(request, response);
+    }
+
+    private void loadAllDroit(HttpServletRequest request, HttpServletResponse response) throws Exception {
         List<DroitDto> droits = droitDao.getAllDroit();
         request.setAttribute("droits", droits);
         request.getRequestDispatcher("/droit.jsp").forward(request, response);

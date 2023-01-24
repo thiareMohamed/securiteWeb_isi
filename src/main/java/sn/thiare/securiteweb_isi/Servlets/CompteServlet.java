@@ -5,7 +5,10 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import sn.thiare.securiteweb_isi.Dao.CompteDao;
 import sn.thiare.securiteweb_isi.Dao.CompteImpl;
+import sn.thiare.securiteweb_isi.Dao.DroitDao;
+import sn.thiare.securiteweb_isi.Dao.DroitImpl;
 import sn.thiare.securiteweb_isi.entity.dto.CompteDto;
+import sn.thiare.securiteweb_isi.entity.dto.DroitDto;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,14 +17,24 @@ import java.util.List;
 public class CompteServlet extends HttpServlet {
 
     private CompteDao compteDao;
+    private DroitDao droitDao;
 
     @Override
     public void init() throws ServletException {
         compteDao = new CompteImpl();
+        droitDao = new DroitImpl();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        //check if the user is connected
+//        HttpSession session = request.getSession();
+//        CompteDto compteDto = (CompteDto) session.getAttribute("compte");
+//        if (compteDto == null) {
+//            request.setAttribute("message", "Vous devez vous connecter pour accéder à cette page");
+//            request.getRequestDispatcher("/login.jsp").forward(request, response);
+//        }
+
         String action = request.getParameter("action");
         try {
             if (action != null) {
@@ -42,8 +55,7 @@ public class CompteServlet extends HttpServlet {
                         break;
                 }
             }
-            List<CompteDto> comptes = compteDao.findAll();
-            request.setAttribute("comptes", comptes);
+            loadAll(request, response);
             request.getRequestDispatcher("/compte.jsp").forward(request, response);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -59,20 +71,20 @@ public class CompteServlet extends HttpServlet {
         CompteDto compteDto = new CompteDto();
         compteDto.setEmail(request.getParameter("email"));
         compteDto.setPassword(request.getParameter("password"));
+        int idDroit = Integer.parseInt(request.getParameter("idDroits"));
 
-        int ok = compteDao.create(compteDto);
+
+        int ok = compteDao.create(compteDto, idDroit);
         String message = "";
         if (ok == 1) {
             message = "Compte créé avec succès";
             request.setAttribute("message", message);
-            List<CompteDto> comptes = compteDao.findAll();
-            request.setAttribute("comptes", comptes);
+            loadAll(request, response);
             request.getRequestDispatcher("/compte.jsp").forward(request, response);
         } else {
             message = "Erreur lors de la création du compte";
             request.setAttribute("message", message);
-            List<CompteDto> comptes = compteDao.findAll();
-            request.setAttribute("comptes", comptes);
+            loadAll(request, response);
             request.getRequestDispatcher("/compte.jsp").forward(request, response);
         }
     }
@@ -84,14 +96,12 @@ public class CompteServlet extends HttpServlet {
         if (ok == 1) {
             message = "Compte supprimé avec succès";
             request.setAttribute("message", message);
-            List<CompteDto> comptes = compteDao.findAll();
-            request.setAttribute("comptes", comptes);
+            loadAll(request, response);
             request.getRequestDispatcher("/compte.jsp").forward(request, response);
         } else {
             message = "Erreur lors de la suppression du compte";
             request.setAttribute("message", message);
-            List<CompteDto> comptes = compteDao.findAll();
-            request.setAttribute("comptes", comptes);
+            loadAll(request, response);
             request.getRequestDispatcher("/compte.jsp").forward(request, response);
         }
     }
@@ -107,14 +117,12 @@ public class CompteServlet extends HttpServlet {
         if (ok == 1) {
             message = "Compte modifié avec succès";
             request.setAttribute("message", message);
-            List<CompteDto> comptes = compteDao.findAll();
-            request.setAttribute("comptes", comptes);
+            loadAll(request, response);
             request.getRequestDispatcher("/compte.jsp").forward(request, response);
         } else {
             message = "Erreur lors de la modification du compte";
             request.setAttribute("message", message);
-            List<CompteDto> comptes = compteDao.findAll();
-            request.setAttribute("comptes", comptes);
+            loadAll(request, response);
             request.getRequestDispatcher("/compte.jsp").forward(request, response);
         }
     }
@@ -123,9 +131,15 @@ public class CompteServlet extends HttpServlet {
         String id = request.getParameter("id");
         CompteDto compteDto = this.compteDao.findById(Integer.parseInt(id));
         request.setAttribute("compte", compteDto);
-        List<CompteDto> comptes = compteDao.findAll();
-        request.setAttribute("comptes", comptes);
+        loadAll(request, response);
         request.getRequestDispatcher("/compte.jsp").forward(request, response);
     }
 
+    private void loadAll(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        List<CompteDto> comptes = compteDao.findAll();
+        request.setAttribute("comptes", comptes);
+        List<DroitDto> droits = droitDao.getAllDroit();
+        request.setAttribute("droits", droits);
+        request.getRequestDispatcher("/compte.jsp").forward(request, response);
+    }
 }

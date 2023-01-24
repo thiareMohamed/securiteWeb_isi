@@ -2,7 +2,9 @@ package sn.thiare.securiteweb_isi.entity;
 
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "comptes", schema = "securiteweb_isi")
@@ -17,6 +19,10 @@ public class ComptesEntity {
     @Basic
     @Column(name = "password")
     private String password;
+
+    @OneToOne()
+    @JoinColumn(name = "idDroit", referencedColumnName = "id")
+    private DroitEntity droitEntity;
 
     public int getId() {
         return id;
@@ -40,6 +46,14 @@ public class ComptesEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public DroitEntity getDroitEntity() {
+        return droitEntity;
+    }
+
+    public void setDroitEntity(DroitEntity droitEntity) {
+        this.droitEntity = droitEntity;
     }
 
     @Override
