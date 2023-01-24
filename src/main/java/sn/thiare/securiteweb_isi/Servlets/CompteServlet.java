@@ -27,13 +27,13 @@ public class CompteServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        //check if the user is connected
-//        HttpSession session = request.getSession();
-//        CompteDto compteDto = (CompteDto) session.getAttribute("compte");
-//        if (compteDto == null) {
-//            request.setAttribute("message", "Vous devez vous connecter pour accéder à cette page");
-//            request.getRequestDispatcher("/login.jsp").forward(request, response);
-//        }
+        //check if the user is connected
+        HttpSession session = request.getSession();
+        CompteDto compteDto = (CompteDto) session.getAttribute("compte");
+        if (compteDto == null) {
+            request.setAttribute("message", "Vous devez vous connecter pour accéder à cette page");
+            request.getRequestDispatcher("/index.jsp").forward(request, response);
+        }
 
         String action = request.getParameter("action");
         try {

@@ -2,9 +2,9 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!doctype html>
 <html lang="en">
-    <%@include file="Layouts/header.jsp"%>
+    <%@include file="/Layouts/header.jsp"%>
     <body>
-    <%@include file="Layouts/navbar.jsp"%>
+    <%@include file="/Layouts/navbar.jsp"%>
     <main class="container flex">
         <section>
             <h2>Espace Compte</h2>
