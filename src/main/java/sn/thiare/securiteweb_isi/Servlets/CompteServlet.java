@@ -36,9 +36,13 @@ public class CompteServlet extends HttpServlet {
         }
 
         String action = request.getParameter("action");
+        System.out.println("action = " + action);
         try {
             if (action != null) {
                 switch (action) {
+                    case "edit":
+                        edit(request, response);
+                        break;
                     case "add":
                         add(request, response);
                         break;
@@ -48,15 +52,14 @@ public class CompteServlet extends HttpServlet {
                     case "update":
                         update(request, response);
                         break;
-                    case "edit":
-                        edit(request, response);
-                        break;
                     default:
                         break;
                 }
             }
+            if (action == null) {
+               request.removeAttribute("compte");
+            }
             loadAll(request, response);
-            request.getRequestDispatcher("/compte.jsp").forward(request, response);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

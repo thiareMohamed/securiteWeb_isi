@@ -29,7 +29,7 @@ public class LoginServlet extends HttpServlet {
                 //use session to store the user
                 HttpSession session = request.getSession();
                 session.setAttribute("compte", compteDto);
-                request.getRequestDispatcher("/CompteServlet").forward(request, response);
+                response.sendRedirect(request.getContextPath() + "/CompteServlet");
             } else {
                 request.setAttribute("message", "Mot de passe incorrect");
                 request.getRequestDispatcher("/index.jsp").forward(request, response);

@@ -10,7 +10,7 @@
     <div class="p-10">
         <div class="bg-purple-100 rounded-lg p-6 py-10">
             <h2 class="text-3xl font-bold text-center">Connexion</h2>
-            <form action="LoginServlet" method="post">
+            <form action="LoginServlet" method="get">
                         <span class="flex flex-col px-20 py-4 text-red-500 font-bold text-center">
                             <c:if test="${requestScope.message != null}">
                                 ${requestScope.message}
